@@ -1,0 +1,149 @@
+@font-face {
+    font-family: 'Galmuri11';
+    src: url(/fonts/Galmuri11.ttf);
+}
+
+* {
+    color: #e6e6e8;
+    font-family: 'Galmuri11';
+    font-size: 44px;
+    text-shadow: 0.080em 0.080em 0 hsl(240 10% 40%),
+    0 0.080em 0 hsl(240 10% 40%), 0.080em 0 0 hsl(240 10% 40%);
+}
+
+select {
+    text-align: center;
+    margin-bottom: 50px;
+    margin-top: 30px;
+    appearance:none;
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
+    display: block;
+    align-self: center;
+}
+
+option {
+  background-color: rgba(0, 0, 0, 1)
+}
+
+body {
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.messageBox {
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  min-height: auto;
+  border-radius: 25px;
+  outline-style: solid;
+  outline-color: #e6e6e8;
+  transition: scale 0.1s; 
+  margin-left: 1%;
+  margin-right: 1%;
+  margin-top: 1%;
+  position: absolute;
+}
+
+#nextBox {
+  padding: 10%;
+  animation-delay: 0.2s;
+}
+
+
+
+button {
+    background-color: rgba(0, 0, 0, 0);
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+    outline: none;
+    appearance: none;
+    align-self: center;
+    position: relative;
+    margin: 30px;
+}
+
+button:hover::before {
+  content: url("imgassets/Cursor.png");
+  position: absolute;
+  left: -25%;
+}
+
+
+.inputfields {
+    display:grid;
+}
+
+.textareatext input[type="checkbox"]{
+    display:block;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.textareatext {
+  padding: 20px;
+}
+
+
+.input-wrap {
+  position: relative;
+}
+.input-wrap .input {
+  position: absolute;
+  width: 100%;
+  left: 0;
+}
+.width-machine {
+  /*   Sort of a magic number to add extra space for number spinner */
+  padding: 0 1rem;
+}
+
+.input,
+.textarea {
+  padding: 0px 0px;
+  transition: padding 0.3s ease;
+  outline: none;
+  border: none;
+}
+
+.input,
+.textarea.show {
+  padding: 20px 20px;
+  outline: none;
+  border: none;
+}
+
+.textarea {
+  display: block;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.4s ease, max-height 0.4s ease;
+}
+
+.textarea.show {
+  display: block;
+  width: 99%;
+  overflow: hidden;
+  resize: both;
+  min-height: 1em;
+  opacity: 100%;
+  max-height: 100vh;
+  line-height: 1.5em;
+  max-width: 100%;
+  resize: none;
+}
+
+.textarea[contenteditable]::before {
+  content: "・";
+}
+

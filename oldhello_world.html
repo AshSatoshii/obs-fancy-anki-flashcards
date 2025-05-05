@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!-- saved from url=(0117)file:///C:/Users/ashsa/OneDrive/Documents/.Code%20Playground/%E6%99%BA%E3%81%AEFlashcardStreamWidget/hello_world.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="./hello_world_files/css_portion.css">
+    </head>
+
+    <body>
+        <audio id="clickSound" src="sfx/click.mp3" preload="auto"></audio>
+        <div id="fullBox">
+                <select>
+                    <option value="">暗記</option>
+                </select>
+            <div class="inputfields">
+                <div class="textareatext" id="Front">Input/入力できる</div>
+                <span class="textarea" role="textbox" spellcheck="false" id="editableSpan" contenteditable="">Input/入力できsdddddddddddddddddddddddddddる</span>
+                <div class="textareatext" id="Back">Input/入力できる</div>
+                <span class="textarea" role="textbox" spellcheck="false" contenteditable="">サトシの名は？<br></span>
+            </div>
+            <button onclick="document.getElementById(&#39;clickSound&#39;).play()">Save/保存</button>
+        </div>
+    
+
+    <script>
+        // Dealing with Input width: 
+        // Taken from https://css-tricks.com/auto-growing-inputs-textareas/ lolol
+        let el = document.querySelector(".input-wrap .input");
+        let widthMachine = document.querySelector(".input-wrap .width-machine");
+        el.addEventListener("keyup", () => {
+        widthMachine.innerHTML = el.value;
+        });
+
+        // Dealing with Textarea Height
+        function calcHeight(value) {
+        let numberOfLineBreaks = (value.match(/\n/g) || []).length;
+        // min-height + lines x line-height + padding + border
+        let newHeight = 20 + numberOfLineBreaks * 20 + 12 + 2;
+        return newHeight;
+        }
+
+        let textarea = document.querySelector(".resize-ta");
+        textarea.addEventListener("keyup", () => {
+        textarea.style.height = calcHeight(textarea.value) + "px";
+        });
+
+        
+
+    </script>
+
+</body></html>

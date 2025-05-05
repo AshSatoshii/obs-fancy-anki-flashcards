@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="css_portion.css">
+        <meta charset="UTF-8">
+    </head>
+
+    <body>
+        <audio id="clickSound" src="sfx/click.mp3" preload="auto"></audio>
+        <audio id="cursorSound" src="sfx/cursorsound.mp3" preload="auto"></audio>
+        <audio id="textBlip" src="sfx/atextblip.mp3" preload="auto" ></audio>
+        <audio id="menuOpen" src="sfx\GUI menu open.ogg" preload="auto" ></audio>
+        <audio id="menuClose" src="sfx\GUI menu close.ogg" preload="auto" ></audio>
+        <!-- <audio id="pc on" -->
+
+        <div class="messageBox" id="mainBox">
+                <select class="select">
+                    <option value="">暗記</option>
+                </select>
+            <div class="inputfields">
+                <label class="textareatext" id="Front">
+                    <input type="checkbox" onchange="document.querySelector('#editableSpanFront').classList.toggle('show');"> Input Front/前を入力できる
+                </label>
+                <span class="textarea" role="textbox" spellcheck="false" id="editableSpanFront" contenteditable></span>
+                <label class="textareatext" id="Back">
+                    <input type="checkbox" onchange="document.querySelector('#editableSpanBack').classList.toggle('show');"> Input Back/後ろを入力できる
+                </label>
+                <span class="textarea" role="textbox" spellcheck="false" id="editableSpanBack" contenteditable></span>
+            </div>
+            <button
+            onmouseenter="
+            document.getElementById('cursorSound').currentTime = 0;
+            document.getElementById('cursorSound').play();"
+            onclick="
+            document.getElementById('mainBox').style.scale = 0;
+            addCard().then(() => {
+                getDeckCount(deckNamesTwo).then(() => {
+                    // console.log(returnedDeckName.name + 'hahaha');
+                    document.getElementById('clickSound').play();
+                    document.getElementById('nextBox').style.scale = 1;
+                    document.getElementById('nextBox').textContent = returnedDeckName.name + 
+                    ' now has new FlashCards. ' + returnedDeckName.total_in_deck;
+                }
+                );
+            })
+            ">Save/保存</button>
+        </div>
+
+        <div class="messageBox" id="nextBox" style="scale: 0">
+            <p>yes.</p>
+        </div>
+    </body>
+    
+    <script>
+        //Initalizations
+        let deckNames;
+        let deckNamesTwo;
+        const select = document.querySelector('.select');
+        let spanA = document.getElementById("editableSpanFront");
+        let spanB = document.getElementById("editableSpanBack");
+        let returnedDeckName = "";
+        let textBlip = document.getElementById("textBlip");
+
+        
+        
+        async function selectorInitialize() {
+            result = await fetch('http://127.0.0.1:8765', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "action": 'deckNames',
+                    "version": 6
+                })
+            });
+            
+            const data = await result.json();
+            
+            deckNames = [];
+            
+            for (i = 0; i < data.result.length; i++) {
+                if(data.result[i].includes("Hidden::") || data.result[i].includes("Hidden") || data.result[i].includes("Default")) {
+                    continue;
+                }
+                else {
+                    deckNames.push(data.result[i]);
+                }
+            }
+            
+            return (deckNames);
+        }
+
+        async function addCard() {
+            // let fixedDeckName = select.selectedIndex.slice(0, select.selectedIndex.length - 2);
+
+            result = await fetch('http://127.0.0.1:8765', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "action": "addNote",
+                    "version": 6,
+                    "params":{
+                        "note":{
+                                "deckName":deckNames[select.selectedIndex - 1],
+                                "modelName":"Basic",
+                                "fields": {
+                                    "Front":document.getElementById("editableSpanFront").textContent,
+                                    "Back":document.getElementById("editableSpanBack").textContent
+                                }
+                            }
+                    }
+                }
+            )
+            });
+
+            const data = await result.json();
+            if (data.error) {
+                alert(data.error);
+            }
+
+            deckNamesTwo = deckNames[select.selectedIndex - 1];
+        }
+
+        async function getDeckCount(nameOfDeck) {
+            result = await fetch('http://127.0.0.1:8765', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "action": "getDeckStats",
+                    "version": 6,
+                    "params": {
+                    "decks": [nameOfDeck]
+                    }
+                })
+            })
+
+            const data = await result.json();
+            returnedDeckName = Object.values(data.result)[0];
+            // console.log(nameOfDeck + " nameOfDeck");
+            // console.log(returnedDeckName.name + " returnedDeckName.name" );
+            // console.log(returnedDeckName.deck_id + " returnedDeckName.deck_id");
+        }
+
+        //Adding Event Listeners
+
+        window.addEventListener('focus',  () => {
+            document.getElementById('menuOpen').volume = 0.5;
+            document.getElementById('menuOpen').play();
+            document.getElementById('mainBox').style.scale = 1;
+
+        })
+
+        window.addEventListener('blur',   () => {
+            document.getElementById('menuClose').volume = 0.5;
+            document.getElementById('menuClose').play();
+            document.getElementById('mainBox').style.scale = 0;
+            document.getElementById('nextBox').style.scale = 0;
+        })
+
+        spanA.addEventListener("keydown", () => {
+            document.getElementById('textBlip').currentTime = 0;
+            document.getElementById('textBlip').play();
+        });
+
+        spanB.addEventListener("keydown", () => {
+            document.getElementById('textBlip').currentTime = 0;
+            document.getElementById('textBlip').play();
+        });
+
+        // Execution
+
+        deckNames = selectorInitialize().then(() => { 
+            for(let i = 0; i < deckNames.length; i++) {
+                oneDeck = document.createElement("OPTION");
+                oneDeck.text = deckNames[i] + "の暗記";
+                select.add(oneDeck);
+            }
+        });
+
+
+    </script>
+
+</html>
